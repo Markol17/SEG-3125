@@ -32,7 +32,7 @@
   height: 100px;
   justify-content: flex-end;
   align-items: center;
-  right: 1.5vw;
+  right: 20px;
 }
 
 .storeContainer {
@@ -199,7 +199,7 @@ p {
 }
 
 .focused {
-  background-color: #32ad00;
-  border-color: #32ad00;
+  background-color: #07b0ed;
+  border-color: #07b0ed;
   color: white;
 }

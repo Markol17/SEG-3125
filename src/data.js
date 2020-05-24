@@ -67,7 +67,7 @@ const data = [
     name: 'Orange Juice',
     img:
       'https://www.drinks-insight-network.com/wp-content/uploads/sites/23/2020/04/shutterstock_788249257-1.jpg',
-    price: 6,
+    price: 7.3,
     quantity: 1,
     attributes: ['Orgarnic', 'Vegetarian', 'Gluten-free'],
   },

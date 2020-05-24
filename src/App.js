@@ -11,19 +11,24 @@ import exit from './exit.svg';
 function App() {
   const [cart, setCart] = useState([]);
   const [modalIsOpen, setIsOpen] = React.useState(true);
+  const [items, setItems] = React.useState(data);
 
   const [organic, setOrganic] = React.useState(true);
   const [vegetarian, setVegetarian] = React.useState(true);
   const [glutenfree, setGlutenfree] = React.useState(true);
+
   const [priceIncreasingOrder, setPriceIncreasingOrder] = React.useState(true);
+  const [priceDecreasingOrder, setPriceDecreasingOrder] = React.useState(false);
+
+  useEffect(() => {
+    priceIncreasingOrder
+      ? sortPriceInIncreasingOrder()
+      : sortPriceInDecreasingOrder();
+  });
 
   useEffect(() => {
     removeNonPreferredItems();
   }, [organic, vegetarian, glutenfree]);
-
-  useEffect(() => {
-    sortPriceInIncreasingOrder(priceIncreasingOrder);
-  }, [priceIncreasingOrder]);
 
   function increaseQuantity(item) {
     const index = cart.indexOf(item);
@@ -54,14 +59,46 @@ function App() {
     setCart([...cart]);
   }
 
-  function sortPriceInIncreasingOrder(isActive) {
-    if (isActive) {
-      console.log('hello');
-    }
+  function sortPriceInIncreasingOrder() {
+    const incItems = items.sort(function (a, b) {
+      return a.price - b.price;
+    });
+    setItems(incItems);
+  }
+
+  function sortPriceInDecreasingOrder() {
+    const decItems = items.sort(function (a, b) {
+      return b.price - a.price;
+    });
+    setItems(decItems);
   }
 
   function removeNonPreferredItems() {
-    console.log('removed');
+    const attributes = {
+      Orgarnic: organic,
+      Vegetarian: vegetarian,
+      Glutenfree: glutenfree,
+    };
+
+    let count = 0;
+    let itemsToKeep = [];
+
+    for (const item of items) {
+      let attributesLength = item.attributes.length;
+      for (let attribute of item.attributes) {
+        attribute = attribute.replace('-', '');
+        if (!attributes[attribute]) {
+          break;
+        } else {
+          count++;
+        }
+        if (count === attributesLength) {
+          itemsToKeep.push(item);
+        }
+      }
+      count = 0;
+    }
+    setItems([...itemsToKeep]);
   }
 
   function openModal() {
@@ -77,26 +114,41 @@ function App() {
     setPrefFocused('2', vegetarian);
     setPrefFocused('3', glutenfree);
     setPrefFocused('4', priceIncreasingOrder);
+    setPrefFocused('5', priceDecreasingOrder);
   }
 
   function setOrg() {
+    setItems([...data]);
     setPrefFocused('1', !organic);
     setOrganic(!organic);
   }
 
   function setVeg() {
+    setItems([...data]);
     setPrefFocused('2', !vegetarian);
     setVegetarian(!vegetarian);
   }
 
   function setGlutFree() {
+    setItems([...data]);
     setPrefFocused('3', !glutenfree);
     setGlutenfree(!glutenfree);
   }
 
   function setPriceInc() {
-    setPrefFocused('4', !priceIncreasingOrder);
-    setPriceIncreasingOrder(!priceIncreasingOrder);
+    setPrefFocused('5', false);
+    setPrefFocused('4', true);
+    setPriceDecreasingOrder(false);
+    setPriceIncreasingOrder(true);
+    sortPriceInIncreasingOrder();
+  }
+
+  function setPriceDec() {
+    setPrefFocused('4', false);
+    setPrefFocused('5', true);
+    setPriceIncreasingOrder(false);
+    setPriceDecreasingOrder(true);
+    sortPriceInDecreasingOrder();
   }
 
   function setPrefFocused(id, isActive) {
@@ -124,7 +176,7 @@ function App() {
       </div>
       <div className='storeContainer'>
         <div className='cardContainer'>
-          {data.map((item, index) => (
+          {items.map((item, index) => (
             <Card key={index} item={item} addItem={addItem} />
           ))}
         </div>
@@ -176,6 +228,9 @@ function App() {
           </button>
           <button id='4' className='radioButton' onClick={setPriceInc}>
             Price in increasing order
+          </button>
+          <button id='5' className='radioButton' onClick={setPriceDec}>
+            Price in decreasing order
           </button>
         </div>
       </Modal>
