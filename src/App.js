@@ -297,7 +297,7 @@ function App() {
           </button>
         </div>
         <div className='helpMessage'>
-          * blue means that the button is slected
+          * blue means that the button is selected
         </div>
       </Modal>
     </>
