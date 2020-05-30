@@ -7,11 +7,12 @@ import './App.css';
 import logo from './logo.png';
 import settings from './settings.svg';
 import exit from './exit.svg';
+import arrow from './arrow.svg';
 
 function App() {
   const [cart, setCart] = useState([]);
   const [modalIsOpen, setIsOpen] = React.useState(true);
-  const [items, setItems] = React.useState(data);
+  const [categories, setCategories] = React.useState(data);
 
   const [organic, setOrganic] = React.useState(true);
   const [vegetarian, setVegetarian] = React.useState(true);
@@ -19,12 +20,6 @@ function App() {
 
   const [priceIncreasingOrder, setPriceIncreasingOrder] = React.useState(true);
   const [priceDecreasingOrder, setPriceDecreasingOrder] = React.useState(false);
-
-  useEffect(() => {
-    priceIncreasingOrder
-      ? sortPriceInIncreasingOrder()
-      : sortPriceInDecreasingOrder();
-  });
 
   useEffect(() => {
     removeNonPreferredItems();
@@ -60,17 +55,25 @@ function App() {
   }
 
   function sortPriceInIncreasingOrder() {
-    const incItems = items.sort(function (a, b) {
-      return a.price - b.price;
-    });
-    setItems(incItems);
+    let incData = [];
+    for (const items of categories) {
+      const incItems = items.sort(function (a, b) {
+        return a.price - b.price;
+      });
+      incData.push(incItems);
+    }
+    setCategories(incData);
   }
 
   function sortPriceInDecreasingOrder() {
-    const decItems = items.sort(function (a, b) {
-      return b.price - a.price;
-    });
-    setItems(decItems);
+    let decData = [];
+    for (const items of categories) {
+      const decItems = items.sort(function (a, b) {
+        return b.price - a.price;
+      });
+      decData.push(decItems);
+    }
+    setCategories(decData);
   }
 
   function removeNonPreferredItems() {
@@ -81,24 +84,28 @@ function App() {
     };
 
     let count = 0;
-    let itemsToKeep = [];
+    let result = [];
 
-    for (const item of items) {
-      let attributesLength = item.attributes.length;
-      for (let attribute of item.attributes) {
-        attribute = attribute.replace('-', '');
-        if (!attributes[attribute]) {
-          break;
-        } else {
-          count++;
+    for (const category of data) {
+      let itemsToKeep = [];
+      for (const item of category) {
+        let attributesLength = item.attributes.length;
+        for (let attribute of item.attributes) {
+          attribute = attribute.replace('-', '');
+          if (!attributes[attribute]) {
+            break;
+          } else {
+            count++;
+          }
+          if (count === attributesLength) {
+            itemsToKeep.push(item);
+          }
         }
-        if (count === attributesLength) {
-          itemsToKeep.push(item);
-        }
+        count = 0;
       }
-      count = 0;
+      result.push(itemsToKeep);
     }
-    setItems([...itemsToKeep]);
+    setCategories(result);
   }
 
   function openModal() {
@@ -118,19 +125,16 @@ function App() {
   }
 
   function setOrg() {
-    setItems([...data]);
     setPrefFocused('1', !organic);
     setOrganic(!organic);
   }
 
   function setVeg() {
-    setItems([...data]);
     setPrefFocused('2', !vegetarian);
     setVegetarian(!vegetarian);
   }
 
   function setGlutFree() {
-    setItems([...data]);
     setPrefFocused('3', !glutenfree);
     setGlutenfree(!glutenfree);
   }
@@ -149,6 +153,20 @@ function App() {
     setPriceIncreasingOrder(false);
     setPriceDecreasingOrder(true);
     sortPriceInDecreasingOrder();
+  }
+
+  function toggleCategory(event) {
+    const childNodes = event.target.parentNode.childNodes;
+
+    if (childNodes[2].classList.contains('hidden')) {
+      childNodes[2].classList.remove('hidden');
+      childNodes[1].classList.add('hidden');
+      childNodes[0].children[0].classList.add('categoryIsOpen');
+    } else {
+      childNodes[2].classList.add('hidden');
+      childNodes[1].classList.remove('hidden');
+      childNodes[0].children[0].classList.remove('categoryIsOpen');
+    }
   }
 
   function setPrefFocused(id, isActive) {
@@ -175,9 +193,48 @@ function App() {
         </div>
       </div>
       <div className='storeContainer'>
-        <div className='cardContainer'>
-          {items.map((item, index) => (
-            <Card key={index} item={item} addItem={addItem} />
+        <div className='itemsContainer'>
+          {categories.map((category, categoryIndex) => (
+            <>
+              {category.length !== 0 && (
+                <div key={categoryIndex} className='category'>
+                  <div className='categoryHeader' onClick={toggleCategory}>
+                    <img
+                      className={`arrowIcon ${
+                        categoryIndex === 0 ? 'categoryIsOpen' : ''
+                      }`}
+                      alt='logo'
+                      src={arrow}
+                      onClick={(e) => e.stopPropagation()}
+                    />
+                    <p
+                      className='categoryTitle'
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      {category[0].category}
+                    </p>
+                  </div>
+                  {categoryIndex + 1 !== categories.length ? (
+                    <div
+                      className={`separator ${
+                        categoryIndex === 0 ? 'hidden' : ''
+                      }`}
+                    />
+                  ) : (
+                    <div />
+                  )}
+                  <div
+                    className={`categoryCards ${
+                      categoryIndex === 0 ? '' : 'hidden'
+                    }`}
+                  >
+                    {category.map((item, cardIndex) => (
+                      <Card key={cardIndex} item={item} addItem={addItem} />
+                    ))}
+                  </div>
+                </div>
+              )}
+            </>
           ))}
         </div>
         <div className='cartContainer'>
@@ -187,7 +244,7 @@ function App() {
       <footer>
         <div className='footer'>
           <span role='img' className='footerText'>
-            Website designed with ❤️ by Mark-Olivier Poulin
+            Website built & designed with ❤️ by Mark-Olivier Poulin
           </span>
         </div>
       </footer>
@@ -214,7 +271,7 @@ function App() {
           </div>
         </div>
         <div className='preferences'>
-          <p className='modalSubHeader'>Preferences</p>
+          <p className='modalSubHeader'>Tell us about your preferences!</p>
         </div>
         <div className='prefContainer'>
           <button id='1' className='radioButton' onClick={setOrg}>
@@ -232,6 +289,9 @@ function App() {
           <button id='5' className='radioButton' onClick={setPriceDec}>
             Price in decreasing order
           </button>
+        </div>
+        <div className='helpMessage'>
+          * blue means that the button is slected
         </div>
       </Modal>
     </>

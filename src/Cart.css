@@ -99,3 +99,23 @@
   font-weight: bold;
   font-size: 20px;
 }
+
+.payButton {
+  background-color: #f3f3f3;
+  font-family: 'Raleway', sans-serif;
+  font-weight: bold;
+  font-size: 24px;
+  color: black;
+  outline: none;
+  border: none;
+  border-top: 2px dashed #dedede;
+  border-radius: 0 0 3px 3px;
+  width: 100%;
+  height: 60px;
+  cursor: pointer;
+}
+
+.disabledPay {
+  color: #737373;
+  cursor: not-allowed;
+}

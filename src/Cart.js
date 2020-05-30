@@ -47,6 +47,16 @@ function Cart({ items, deleteItem }) {
         <p className='cartTotal'>Total:</p>
         <p className='cartTotalAmount'>{getTotal()}$</p>
       </div>
+      <button
+        className={`payButton ${items.length === 0 ? 'disabledPay' : ''}`}
+        type='button'
+        disabled={items.length === 0}
+        onClick={() => {
+          alert('The payout page is under construction');
+        }}
+      >
+        Pay
+      </button>
     </div>
   );
 }
