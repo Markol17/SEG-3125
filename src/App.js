@@ -54,26 +54,26 @@ function App() {
     setCart([...cart]);
   }
 
-  function sortPriceInIncreasingOrder() {
+  function sortPriceInIncreasingOrder(data) {
     let incData = [];
-    for (const items of categories) {
+    for (const items of data) {
       const incItems = items.sort(function (a, b) {
         return a.price - b.price;
       });
       incData.push(incItems);
     }
-    setCategories(incData);
+    return data;
   }
 
-  function sortPriceInDecreasingOrder() {
+  function sortPriceInDecreasingOrder(data) {
     let decData = [];
-    for (const items of categories) {
+    for (const items of data) {
       const decItems = items.sort(function (a, b) {
         return b.price - a.price;
       });
       decData.push(decItems);
     }
-    setCategories(decData);
+    return data;
   }
 
   function removeNonPreferredItems() {
@@ -104,6 +104,12 @@ function App() {
         count = 0;
       }
       result.push(itemsToKeep);
+    }
+
+    if (priceIncreasingOrder) {
+      result = sortPriceInIncreasingOrder(result);
+    } else {
+      result = sortPriceInDecreasingOrder(result);
     }
     setCategories(result);
   }
@@ -144,7 +150,7 @@ function App() {
     setPrefFocused('4', true);
     setPriceDecreasingOrder(false);
     setPriceIncreasingOrder(true);
-    sortPriceInIncreasingOrder();
+    setCategories(sortPriceInIncreasingOrder(categories));
   }
 
   function setPriceDec() {
@@ -152,7 +158,7 @@ function App() {
     setPrefFocused('5', true);
     setPriceIncreasingOrder(false);
     setPriceDecreasingOrder(true);
-    sortPriceInDecreasingOrder();
+    setCategories(sortPriceInDecreasingOrder(categories));
   }
 
   function toggleCategory(event) {
