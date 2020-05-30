@@ -31,7 +31,7 @@ function Cart({ items, deleteItem }) {
               {item.quantity > 1 ? ' x ' + item.quantity : null}
             </p>
             <div className='itemRight'>
-              <p className='price'>{item.price.toFixed(2)}$</p>
+              <p className='price'>${item.price.toFixed(2)}</p>
               <button
                 className='delButton'
                 type='button'
@@ -45,7 +45,7 @@ function Cart({ items, deleteItem }) {
       </div>
       <div className='cartFooter'>
         <p className='cartTotal'>Total:</p>
-        <p className='cartTotalAmount'>{getTotal()}$</p>
+        <p className='cartTotalAmount'>${getTotal()}</p>
       </div>
       <button
         className={`payButton ${items.length === 0 ? 'disabledPay' : ''}`}

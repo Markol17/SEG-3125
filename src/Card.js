@@ -17,7 +17,7 @@ function Card({ item, addItem }) {
       <div className='cardContent'>
         <div className='cardHeader'>
           <p className='name'>{item.name}</p>
-          <p className='price'>{item.price.toFixed(2)}$</p>
+          <p className='price'>${item.price.toFixed(2)}</p>
         </div>
         <p className='attributes'>
           {item.attributes.map((attribute, index) =>
