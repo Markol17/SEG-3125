@@ -1,3 +1,3 @@
-#Grocery Store
+# Grocery Store
 
 Simple grocery store app
